@@ -10,14 +10,9 @@ import FormControl from "@material-ui/core/FormControl";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import InputBase from "@material-ui/core/InputBase";
 import Button from "@material-ui/core/Button";
-import clsx from "clsx";
-import IconButton from "@material-ui/core/IconButton";
-import Input from "@material-ui/core/Input";
-import FilledInput from "@material-ui/core/FilledInput";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import axios from "../service/axios";
 
 const BootstrapInput = withStyles((theme: Theme) =>
@@ -67,6 +62,11 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       width: "300px",
     },
+    errorText: {
+      color: "red",
+      fontSize: "12px",
+      paddingLeft: "10px",
+    },
   })
 );
 
@@ -74,6 +74,7 @@ export default function CustomizedSelects() {
   const classes = useStyles();
   const [asset, setAsset] = useState("");
   const [amount, setAmount] = useState("");
+  const [error, setError] = useState("");
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setAsset(event.target.value as string);
   };
@@ -82,9 +83,10 @@ export default function CustomizedSelects() {
       .get("/", {
         params: { asset: asset },
       })
-      .then((res: any) => setAmount(res.data.value))
-      .catch((err: any) => {
-        console.log("err", err);
+      .then((res: any) => {
+        if (res.data.error) setError(res.data.message[0]);
+        else setError("");
+        setAmount(res.data.value);
       });
   };
 
@@ -102,6 +104,9 @@ export default function CustomizedSelects() {
           <option value="BTC">BTC</option>
           <option value="ETH">ETH</option>
         </NativeSelect>
+        <Typography variant="h1" component="h2" className={classes.errorText}>
+          {error}
+        </Typography>
         <Button
           variant="contained"
           color="primary"

@@ -7,17 +7,16 @@ const instance = axios.create({
     Accept: "application/json",
   },
   responseType: "json",
-  // baseURL: 'http://localhost:5000'
 });
 
 instance.interceptors.response.use(
   (response: any) => {
-    console.log("Response", response);
+    console.log("response", response);
     return response;
   },
   (error: any) => {
-    if (error) console.log(error.statusCode);
-    return;
+    console.log("error", error.response);
+    return error.response;
   }
 );
 
